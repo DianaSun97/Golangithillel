@@ -1,106 +1,43 @@
 package main
 
-import "fmt"
-
-type Task struct {
-	Title     string
-	Completed bool
-}
-
-type TasksList map[int]*Task
-
-// Add a new task to the list
-func (tl TasksList) Add(title string) {
-	key := len(tl) + 1
-	tl[key] = &Task{Title: title}
-	fmt.Println("Added task:", title)
-}
-
-// Delete a task by ID
-func (tl TasksList) Delete(key int) {
-	if _, ok := tl[key]; ok {
-		delete(tl, key)
-		fmt.Printf("Task %d has been deleted\n", key)
-	} else {
-		fmt.Printf("TaskList does not contain a Task with the specified id: %d\n", key)
-	}
-}
-
-// Print all tasks in the list
-func (tl TasksList) Print() {
-	if len(tl) == 0 {
-		fmt.Println("TaskList is empty")
-		return
-	}
-	fmt.Println("TaskList:")
-	for key, task := range tl {
-		fmt.Printf("TaskID: %d Title: %s Completed: %t\n", key, task.Title, task.Completed)
-	}
-}
-
-// Mark a task as completed by ID
-func (tl TasksList) CompleteTask(taskID int) {
-	if task, ok := tl[taskID]; ok {
-		task.Completed = true
-		fmt.Printf("Task %d marked as completed\n", taskID)
-	} else {
-		fmt.Printf("TaskList does not contain a Task with the specified id: %d\n", taskID)
-	}
-}
+import (
+	"fmt"
+)
 
 func main() {
-	tasks := make(TasksList)
+	manageEmployeeTime()
+}
+
+func manageEmployeeTime() {
+	employeeManager := app.NewEmployeeManager()
 
 	for {
-		fmt.Println("\n1. Add a task")
-		fmt.Println("2. Remove a task")
-		fmt.Println("3. View all tasks")
-		fmt.Println("4. Mark a task as completed")
-		fmt.Println("5. Exit")
-		fmt.Print("Choose an option: ")
+		fmt.Println("\nTime Management System")
+		fmt.Println("\nOptions:")
+		fmt.Println("[1] Add an employee")
+		fmt.Println("[2] Assign work hours")
+		fmt.Println("[3] List all employees")
+		fmt.Println("[4] Show weekly work hours")
+		fmt.Println("[5] Exit")
+		fmt.Print("\nChoose an option: ")
 
-		var choice int
-		_, err := fmt.Scanf("%d", &choice)
-		if err != nil {
-			fmt.Println("Invalid input, please try again.")
-			continue
-		}
+		var option int
+		fmt.Scanln(&option)
 
-		switch choice {
+		switch option {
 		case 1:
-			fmt.Print("Enter task title: ")
-			var title string
-			_, err := fmt.Scanf("%s", &title)
-			if err != nil {
-				fmt.Println("Error: Failed to read task title.")
-				continue
-			}
-			tasks.Add(title)
+			app.InputNewEmployee(employeeManager)
 		case 2:
-			fmt.Print("Enter ID of the task to remove: ")
-			var id int
-			_, err := fmt.Scanf("%d", &id)
-			if err != nil {
-				fmt.Println("Error: Failed to read task ID.")
-				continue
-			}
-			tasks.Delete(id)
+			app.SetEmployeeWorkHours(employeeManager)
 		case 3:
-			tasks.Print()
+			app.DisplayAllEmployees(employeeManager)
 		case 4:
-			fmt.Print("Enter ID of the task to mark as completed: ")
-			var id int
-			_, err := fmt.Scanf("%d", &id)
-			if err != nil {
-				fmt.Println("Error: Failed to read task ID.")
-				continue
-			}
-			tasks.CompleteTask(id)
+			app.ShowEmployeeWeeklyHours(employeeManager)
 		case 5:
-			fmt.Println("Program exited.")
+			fmt.Println("Exiting...")
 			return
 		default:
-			fmt.Println("Invalid choice, please try again.")
+			fmt.Println("Invalid option")
 		}
 	}
 }
